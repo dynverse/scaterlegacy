@@ -32,11 +32,11 @@ so, then these feature controls are used.}
 alpha level (transparency) of plotted points.}
 
 \item{show_smooth}{logical, should a smoothed fit through feature controls
-(if available; all features if not) be shown on the plot? Lowess used if a 
-small number of feature controls. For details see 
+(if available; all features if not) be shown on the plot? Lowess used if a
+small number of feature controls. For details see
 \code{\link[ggplot2]{geom_smooth}}.}
 
-\item{se}{logical, should standard error (confidence interval) be shown for 
+\item{se}{logical, should standard error (confidence interval) be shown for
 smoothed fit?}
 
 \item{...}{further arguments passed to \code{\link{plotMetadata}} (should
@@ -68,9 +68,9 @@ ex_sceset <- calculateQCMetrics(ex_sceset)
 plotExprsFreqVsMean(ex_sceset)
 
 ex_sceset <- calculateQCMetrics(
-ex_sceset, feature_controls = list(controls1 = 1:20, 
+ex_sceset, feature_controls = list(controls1 = 1:20,
                                       controls2 = 500:1000),
-                                      cell_controls = list(set_1 = 1:5, 
+                                      cell_controls = list(set_1 = 1:5,
                                       set_2 = 31:40))
 plotExprsFreqVsMean(ex_sceset)
 

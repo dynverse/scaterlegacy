@@ -22,13 +22,13 @@ sets that are spike-ins. If \code{NULL}, all spike-in information is removed.}
 \item{...}{arguments passed through generic version of the function.}
 }
 \value{
-A \code{SCESet} object containing spike-in information in 
-\code{featureControlInfo} and an updated \code{is_feature_spike} vector for 
+A \code{SCESet} object containing spike-in information in
+\code{featureControlInfo} and an updated \code{is_feature_spike} vector for
 extraction with \code{\link{isSpike}}.
 }
 \description{
-Specify which feature control sets in the SCESet object are spike-ins, i.e., 
-RNA of the same type and quantity added to each cell during the scRNA-seq 
+Specify which feature control sets in the SCESet object are spike-ins, i.e.,
+RNA of the same type and quantity added to each cell during the scRNA-seq
 protocol.
 }
 \details{

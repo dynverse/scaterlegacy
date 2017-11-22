@@ -23,7 +23,7 @@ interest.}
 
 \item{exprs_values}{which slot of the \code{assayData} in the \code{object}
 should be used to define expression? Valid options are "counts",
-"tpm", "fpkm" and "exprs" (default), or anything else in the object added manually by 
+"tpm", "fpkm" and "exprs" (default), or anything else in the object added manually by
 the user.}
 
 \item{ntop}{numeric scalar indicating the number of most variable features to
@@ -48,9 +48,9 @@ a \code{\link{ggplot}} plot object
 Find most important principal components for a given variable
 }
 \details{
-Plot the top 5 or 6 most important PCs (depending on the 
+Plot the top 5 or 6 most important PCs (depending on the
 \code{plot_type} argument for a given variable. Importance here is defined as
-the R-squared value from a linear model regressing each PC onto the variable 
+the R-squared value from a linear model regressing each PC onto the variable
 of interest.
 }
 \examples{

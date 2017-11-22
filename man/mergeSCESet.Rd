@@ -12,7 +12,7 @@ mergeSCESet(x, y, fdata_cols = NULL, pdata_cols = NULL)
 \item{y}{an \code{\link{SCESet}} object}
 
 \item{fdata_cols}{a character vector indicating which columns of featureData
-of \code{x} and \code{y} should be retained. Alternatively, an integer or 
+of \code{x} and \code{y} should be retained. Alternatively, an integer or
 logical vector can be supplied to subset the column names of \code{fData(x)},
 such that the subsetted character vector contains the columns to be retained.
 Defaults to all shared columns between \code{fData(x)} and \code{fData(y)}.}
@@ -30,7 +30,7 @@ Merge two SCESet objects that have the same features but contain different cells
 }
 \details{
 Existing cell-cell pairwise distances and feature-feature pairwise distances will not be valid for a merged \code{SCESet} object.
-These entries are subsequently set to \code{NULL} in the returned object. 
+These entries are subsequently set to \code{NULL} in the returned object.
 Similarly, new \code{experimentData} will need to be added to the merged object.
 
 If \code{fdata_cols} does not include the definition of feature controls, the control sets may not be defined in the output object.

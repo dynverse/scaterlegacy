@@ -13,14 +13,14 @@ isOutlier(metric, nmads = 5, type = c("both", "lower", "higher"),
 \item{nmads}{scalar, number of median-absolute-deviations away from median
 required for a value to be called an outlier}
 
-\item{type}{character scalar, choice indicate whether outliers should be 
-looked for at both tails (default: "both") or only at the lower end ("lower") 
+\item{type}{character scalar, choice indicate whether outliers should be
+looked for at both tails (default: "both") or only at the lower end ("lower")
 or the higher end ("higher")}
 
-\item{log}{logical, should the values of the metric be transformed to the 
+\item{log}{logical, should the values of the metric be transformed to the
 log10 scale before computing median-absolute-deviation for outlier detection?}
 
-\item{subset}{logical or integer vector, which subset of values should be 
+\item{subset}{logical or integer vector, which subset of values should be
 used to calculate the median/MAD? If \code{NULL}, all values are used.
 Missing values will trigger a warning and will be automatically ignored.}
 

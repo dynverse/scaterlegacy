@@ -16,17 +16,17 @@ isSpike(object, ...)
 
 \item{...}{arguments passed through generic version of the function.}
 
-\item{type}{a character vector specifying the feature control sets to use. All 
+\item{type}{a character vector specifying the feature control sets to use. All
 specified spike-in sets in \code{featureControlInfo(object)} are used by default.}
 
-\item{warning}{A logical scalar specifying if a warning should be raised 
+\item{warning}{A logical scalar specifying if a warning should be raised
 if spike-in controls are unavailable.}
 }
 \value{
 A logical vector specifying if each row is a spike-in feature.
 }
 \description{
-Get the features in the SCESet object that are spike-in controls, as 
+Get the features in the SCESet object that are spike-in controls, as
 specified using \code{\link{setSpike}}.
 }
 \examples{

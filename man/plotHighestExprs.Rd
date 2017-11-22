@@ -27,9 +27,9 @@ from endogenous rather than synthetic genes.}
 should be used to define expression? Valid options are "counts" (default),
 "tpm", "fpkm" and "exprs".}
 
-\item{feature_names_to_plot}{character scalar indicating which column of the 
-featureData slot in the \code{object} is to be used for the feature names 
-displayed on the plot. Default is \code{NULL}, in which case 
+\item{feature_names_to_plot}{character scalar indicating which column of the
+featureData slot in the \code{object} is to be used for the feature names
+displayed on the plot. Default is \code{NULL}, in which case
 \code{featureNames(object)} is used.}
 }
 \value{
