@@ -34,8 +34,8 @@ panels) in the plot. Default is \code{NULL}, in which case there is no
 blocking.}
 
 \item{colour_by}{character string defining the column of \code{pData(object)} to
-be used as a factor by which to colour the points in the plot. Alternatively, 
-a data frame with one column containing a value for each cell, which will be 
+be used as a factor by which to colour the points in the plot. Alternatively,
+a data frame with one column containing a value for each cell, which will be
 mapped to a corresponding colour.}
 
 \item{nfeatures}{numeric scalar indicating the number of features to include
@@ -43,8 +43,8 @@ in the plot.}
 
 \item{exprs_values}{character string indicating which values should be used
 as the expression values for this plot. Valid arguments are \code{"tpm"}
-(transcripts per million), \code{"counts"} (raw counts), \code{"cpm"} 
-(counts per million), \code{"fpkm"} (FPKM values), or \code{"exprs"} (default; 
+(transcripts per million), \code{"counts"} (raw counts), \code{"cpm"}
+(counts per million), \code{"fpkm"} (FPKM values), or \code{"exprs"} (default;
 which are assumed to be on the log2 scale and are un-logged prior to plotting). If
 not specified, the function will search for values in the order given above.}
 

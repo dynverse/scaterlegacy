@@ -33,7 +33,7 @@ the user.}
 
 \item{colour_by}{optional character string supplying name of a column of
 \code{fData(object)} which will be used as a variable by which to colour
-expression values on the plot. Alternatively, a data frame with 
+expression values on the plot. Alternatively, a data frame with
 one column, containing a value for each feature to map to a colour.}
 
 \item{shape_by}{optional character string supplying name of a column of

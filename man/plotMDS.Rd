@@ -34,7 +34,7 @@ is produced. NB: computing more than two components for t-SNE can become very
 time consuming.}
 
 \item{colour_by}{character string defining the column of \code{pData(object)} to
-be used as a factor by which to colour the points in the plot. Alternatively, a 
+be used as a factor by which to colour the points in the plot. Alternatively, a
 data frame with one column containing values to map to colours for all cells.}
 
 \item{shape_by}{character string defining the column of \code{pData(object)} to

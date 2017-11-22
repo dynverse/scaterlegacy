@@ -16,7 +16,7 @@ expects at least x and y variables to be supplied. The default is to produce
 a density plot of number of cells expressing the feature (requires
 \code{calculateQCMetrics} to have been run on the SCESet object prior).}
 
-\item{...}{arguments passed to \code{\link{plotMetadata}}, e.g. 
+\item{...}{arguments passed to \code{\link{plotMetadata}}, e.g.
 \code{theme_size}, \code{size}, \code{alpha}, \code{shape}.}
 }
 \value{
