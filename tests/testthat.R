@@ -1,4 +1,4 @@
 library(testthat)
-library(scater)
+library(scaterlegacy)
 
-test_check("scater")
+test_check("scaterlegacy")

@@ -50,7 +50,7 @@ components to plot, starting from the first principal component. Default is
  top dimensions is produced.}
 
 \item{colour_by}{character string defining the column of \code{pData(object)} to
-be used as a factor by which to colour the points in the plot. Alternatively, a 
+be used as a factor by which to colour the points in the plot. Alternatively, a
 data frame with one column containing values to map to colours for all cells.}
 
 \item{shape_by}{character string defining the column of \code{pData(object)} to
@@ -61,7 +61,7 @@ be used as a factor by which to define the size of points in the plot.}
 
 \item{percentVar}{numeric vector giving the proportion of variance in
 expression explained by each reduced dimension. Only expected to be used
-internally in the \code{\link[scater]{plotPCA}} function.}
+internally in the \code{\link[scaterlegacy]{plotPCA}} function.}
 
 \item{theme_size}{numeric scalar giving default font size for plotting theme
 (default is 10).}
@@ -100,6 +100,6 @@ plotReducedDim(example_sceset, colour_by="Cell_Cycle", shape_by="Treatment")
 plotReducedDim(example_sceset, colour_by="Cell_Cycle", size_by="Treatment")
 plotReducedDim(example_sceset, ncomponents=5)
 plotReducedDim(example_sceset, ncomponents=5, colour_by="Cell_Cycle", shape_by="Treatment")
-plotReducedDim(example_sceset, colour_by="Gene_0001") 
+plotReducedDim(example_sceset, colour_by="Gene_0001")
 
 }

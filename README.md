@@ -1,4 +1,4 @@
-# scater: single-cell analysis toolkit for expression with R
+# scaterlegacy: single-cell analysis toolkit for expression with R
 
 [![Linux Build Status](https://semaphoreci.com/api/v1/davismcc/scater/branches/master/badge.svg)](https://semaphoreci.com/davismcc/scater)
 [![Coverage Status](https://img.shields.io/codecov/c/github/davismcc/scater/master.svg)](https://codecov.io/github/davismcc/scater?branch=master)

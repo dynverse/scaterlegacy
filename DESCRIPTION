@@ -1,4 +1,4 @@
-Package: scater
+Package: scaterlegacy
 Type: Package
 Maintainer: Davis McCarthy <davis@ebi.ac.uk>
 Author: Davis McCarthy
@@ -31,5 +31,5 @@ biocViews: SingleCell, RNASeq, QualityControl, Preprocessing, Normalization,
         DataRepresentation, Infrastructure
 RoxygenNote: 6.0.1
 NeedsCompilation: yes
-URL: http://bioconductor.org/packages/scater/
-BugReports: https://support.bioconductor.org/
+URL: https://github.com/dynverse/scaterlegacy
+BugReports: https://github.com/dynverse/scaterlegacy/issues
