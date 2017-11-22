@@ -282,10 +282,10 @@ setValidity("SCESet", function(object) {
                  "Label names of featurePairwiseDistances must be identical to featureNames(SCESet)")
     }
     ## Check that we have sensible values for the counts
-    if( .checkedCall(cxx_missing_exprs, exprs(object)) ) {
+    if( .checkedCall("missing_exprs", exprs(object)) ) {
         warning( "'exprs' contains missing values" )
     }
-    if ( (!is.null(counts(object))) && .checkedCall(cxx_negative_counts, counts(object)) )
+    if ( (!is.null(counts(object))) && .checkedCall("negative_counts", counts(object)) )
         warning( "'counts' contains negative values" )
 
     if (valid) TRUE else msg
@@ -1851,20 +1851,20 @@ setReplaceMethod("featureControlInfo", signature(object = "SCESet",
 
 #' Get spike-in features in an SCESet object
 #'
-#' Get the features in the SCESet object that are spike-in controls, as 
+#' Get the features in the SCESet object that are spike-in controls, as
 #' specified using \code{\link{setSpike}}.
 #'
 #' @param object a \code{SCESet} object.
-#' @param type a character vector specifying the feature control sets to use. All 
+#' @param type a character vector specifying the feature control sets to use. All
 #' specified spike-in sets in \code{featureControlInfo(object)} are used by default.
-#' @param warning A logical scalar specifying if a warning should be raised 
+#' @param warning A logical scalar specifying if a warning should be raised
 #' if spike-in controls are unavailable.
 #' @param ... arguments passed through generic version of the function.
 #'
 #' @docType methods
 #' @name isSpike
 #' @rdname isSpike
-#' @aliases isSpike isSpike,SCESet-method 
+#' @aliases isSpike isSpike,SCESet-method
 #'
 #' @author Aaron Lun
 #'
@@ -1879,24 +1879,24 @@ setReplaceMethod("featureControlInfo", signature(object = "SCESet",
 #'                             feature_controls = list(ERCC = 1:40, Mito=41:50))
 #' setSpike(example_sceset) <- "ERCC"
 #' summary(isSpike(example_sceset))
-setMethod("isSpike", "SCESet", 
+setMethod("isSpike", "SCESet",
           function(object, type=NULL, warning=TRUE) {
               if (is.null(type)) {
                   is.spike <- fData(object)$is_feature_spike
               } else {
                   not.in <- !(type %in% .spike_fcontrol_names(object))
-                  if (any(not.in)) { 
-                      stop(sprintf("'%s' is not specified as a spike-in control", 
+                  if (any(not.in)) {
+                      stop(sprintf("'%s' is not specified as a spike-in control",
                                    type[not.in][1]))
-                  } 
-                  
+                  }
+
                   # Returning directly if possible.
                   if (length(type) == 1L) {
-                      is.spike <- fData(object)[[paste0("is_feature_control_", 
+                      is.spike <- fData(object)[[paste0("is_feature_control_",
                                                         type)]]
                   } else {
-                      # Combining the spike-in identities. 
-                      is.spike <- logical(nrow(object)) 
+                      # Combining the spike-in identities.
+                      is.spike <- logical(nrow(object))
                       all.absent <- TRUE
                       for (f in type) {
                           cur.spike <- fData(object)[[paste0("is_feature_control_", f)]]
@@ -1915,7 +1915,7 @@ setMethod("isSpike", "SCESet",
                   } else {
                       extra <- ""
                   }
-                  warning(sprintf("no spike-ins specified%s, returning NULL", extra)) 
+                  warning(sprintf("no spike-ins specified%s, returning NULL", extra))
               }
               return(is.spike)
           })
@@ -1926,16 +1926,16 @@ setMethod("isSpike", "SCESet",
 
 #' Set spike-in features in an SCESet object
 #'
-#' Specify which feature control sets in the SCESet object are spike-ins, i.e., 
-#' RNA of the same type and quantity added to each cell during the scRNA-seq 
+#' Specify which feature control sets in the SCESet object are spike-ins, i.e.,
+#' RNA of the same type and quantity added to each cell during the scRNA-seq
 #' protocol.
 #'
 #' @param object a \code{SCESet} object.
 #' @param value a character vector containing the names of the feature control
-#' sets that are spike-ins. If \code{NULL}, all spike-in information is removed. 
+#' sets that are spike-ins. If \code{NULL}, all spike-in information is removed.
 #' @param ... arguments passed through generic version of the function.
 #'
-#' @details 
+#' @details
 #' While it is possible to declare overlapping sets as the spike-in sets with \code{isSpike(x)<-}, this is not advisable.
 #' This is because some downstream operations assume that each row belongs to only one set (i.e., one of the spike-in sets, or the set of endogenous genes).
 #' For example, normalization will use size factors from only one of the sets, so correspondence to multiple sets will not be honoured.
@@ -1948,10 +1948,10 @@ setMethod("isSpike", "SCESet",
 #'
 #' @author Aaron Lun
 #'
-#' @return A \code{SCESet} object containing spike-in information in 
-#' \code{featureControlInfo} and an updated \code{is_feature_spike} vector for 
+#' @return A \code{SCESet} object containing spike-in information in
+#' \code{featureControlInfo} and an updated \code{is_feature_spike} vector for
 #' extraction with \code{\link{isSpike}}.
-#' 
+#'
 #' @export
 #' @examples
 #' data("sc_example_counts")
@@ -1963,34 +1963,34 @@ setMethod("isSpike", "SCESet",
 #' setSpike(example_sceset) <- "ERCC"
 #' featureControlInfo(example_sceset)
 #' summary(isSpike(example_sceset))
-setReplaceMethod("setSpike", signature(object = "SCESet", value = "NULL"), 
+setReplaceMethod("setSpike", signature(object = "SCESet", value = "NULL"),
                  function(object, value) {
-                     fData(object)$is_feature_spike <- NULL 
+                     fData(object)$is_feature_spike <- NULL
                      featureControlInfo(object)$spike <- NULL
-                     return(object) 
+                     return(object)
                  })
 
-setReplaceMethod("setSpike", signature(object = "SCESet", value = "character"), 
+setReplaceMethod("setSpike", signature(object = "SCESet", value = "character"),
                  function(object, value) {
                      # Recording all those that were listed as spikes.
-                     featureControlInfo(object)$spike <- 
+                     featureControlInfo(object)$spike <-
                          .fcontrol_names(object) %in% value
-                     
+
                      # Setting the default is_feature_spike.
                      fData(object)$is_feature_spike <- isSpike(object, value)
-                     
+
                      # Checking that they don't overlap.
-                     if (length(value) > 1L) { 
+                     if (length(value) > 1L) {
                          total.hits <- integer(nrow(object))
                          for (v in value) {
                              total.hits <- total.hits + isSpike(object, v)
                          }
-                         if (any(total.hits > 1L)) { 
+                         if (any(total.hits > 1L)) {
                              warning("overlapping spike-in sets detected")
                          }
                      }
-                     
-                     return(object) 
+
+                     return(object)
                  })
 
 
@@ -2012,7 +2012,7 @@ setReplaceMethod("setSpike", signature(object = "SCESet", value = "character"),
 #'
 #' @return A character vector containing the names of feature control sets
 #' that are spike-in sets.
-#' 
+#'
 #' @export
 #' @examples
 #' data("sc_example_counts")
@@ -2023,7 +2023,7 @@ setReplaceMethod("setSpike", signature(object = "SCESet", value = "character"),
 #'                             feature_controls = list(ERCC = 1:40, Mito=41:50))
 #' setSpike(example_sceset) <- "ERCC"
 #' whichSpike(example_sceset)
-setMethod("whichSpike", signature("SCESet"), 
+setMethod("whichSpike", signature("SCESet"),
           function(object) .spike_fcontrol_names(object))
 
 
@@ -2039,7 +2039,7 @@ setMethod("whichSpike", signature("SCESet"),
 #' @param type a character vector containing the names of the spike-in control sets to extract. By default,
 #' expression values for features in all spike-in control sets are extracted.
 #' @param ... arguments passed through generic version of the function.
-#' 
+#'
 #' @details
 #' If \code{exprs_values="exprs"}, users should have run \code{normalize(object)} first,
 #' so that spike-in features are normalized with spike-in size factors.
@@ -2052,7 +2052,7 @@ setMethod("whichSpike", signature("SCESet"),
 #' @author Aaron Lun
 #'
 #' @return A matrix of expression values for features in the specified spike-in control sets.
-#' 
+#'
 #' @export
 #' @examples
 #' data("sc_example_counts")
@@ -2063,7 +2063,7 @@ setMethod("whichSpike", signature("SCESet"),
 #'                             feature_controls = list(ERCC = 1:40, Mito=41:50))
 #' setSpike(example_sceset) <- "ERCC"
 #' head(spikes(example_sceset))
-setMethod("spikes", "SCESet", 
+setMethod("spikes", "SCESet",
           function(object, exprs_values="counts", type=NULL) {
               is.spike <- isSpike(object, type = type)
               get_exprs(object, exprs_values)[is.spike,,drop = FALSE]
@@ -2102,7 +2102,7 @@ toCellDataSet <- function(sce, exprs_values = "exprs") {
                             tpm = tpm(sce),
                             fpkm = fpkm(sce),
                             counts = counts(sce))
-        if ( exprs_values == "exprs" ) 
+        if ( exprs_values == "exprs" )
             exprsData <- 2 ^ exprsData - sce@logExprsOffset
         celldataset <- monocle::newCellDataSet(
             exprsData, phenoData = phenoData(sce),
@@ -2208,7 +2208,7 @@ getExprs <- function(object) {
 #' @param x an \code{\link{SCESet}} object
 #' @param y an \code{\link{SCESet}} object
 #' @param fdata_cols a character vector indicating which columns of featureData
-#' of \code{x} and \code{y} should be retained. Alternatively, an integer or 
+#' of \code{x} and \code{y} should be retained. Alternatively, an integer or
 #' logical vector can be supplied to subset the column names of \code{fData(x)},
 #' such that the subsetted character vector contains the columns to be retained.
 #' Defaults to all shared columns between \code{fData(x)} and \code{fData(y)}.
@@ -2218,9 +2218,9 @@ getExprs <- function(object) {
 #' all shared columns between \code{pData(x)} and \code{pData(y)}.
 #'
 #' @details Existing cell-cell pairwise distances and feature-feature pairwise distances will not be valid for a merged \code{SCESet} object.
-#' These entries are subsequently set to \code{NULL} in the returned object. 
+#' These entries are subsequently set to \code{NULL} in the returned object.
 #' Similarly, new \code{experimentData} will need to be added to the merged object.
-#' 
+#'
 #' If \code{fdata_cols} does not include the definition of feature controls, the control sets may not be defined in the output object.
 #' In such cases, a warning is issued and the undefined control sets are removed from the \code{featureControlInfo} of the merged object.
 #'
@@ -2251,13 +2251,13 @@ mergeSCESet <- function(x, y, fdata_cols = NULL, pdata_cols = NULL) {
     if (!is(y,'SCESet')) stop('y must be of type SCESet')
     if (!identical(featureNames(x), featureNames(y))) stop("feature names of x and y must be identical")
 
-    for (sl in c("lowerDetectionLimit", "logExprsOffset", "featureControlInfo")) { 
-        if (!identical(slot(x, sl), slot(y, sl))) 
+    for (sl in c("lowerDetectionLimit", "logExprsOffset", "featureControlInfo")) {
+        if (!identical(slot(x, sl), slot(y, sl)))
             stop(sprintf("x and y do not have the same %s", sl))
     }
 
     ## check consistent fData
-    if (is.null(fdata_cols)) { 
+    if (is.null(fdata_cols)) {
         fdata_cols <- intersect(colnames(fData(x)), colnames(fData(y)))
     } else if (!is.character(fdata_cols)) {
         fdata_cols <- colnames(fData(x))[fdata_cols]
@@ -2269,19 +2269,19 @@ mergeSCESet <- function(x, y, fdata_cols = NULL, pdata_cols = NULL) {
     new_fdata <- as(fdata1, "AnnotatedDataFrame")
 
     ## combine pData
-    if (is.null(pdata_cols)) { 
+    if (is.null(pdata_cols)) {
         pdata_cols <- intersect(colnames(pData(x)), colnames(pData(y)))
     } else if (!is.character(pdata_cols)) {
         pdata_cols <- colnames(pData(x))[pdata_cols]
     }
     pdata_x <- pData(x)[, pdata_cols, drop = FALSE]
     pdata_y <- pData(y)[, pdata_cols, drop = FALSE]
-    if (!identical(colnames(pdata_x), colnames(pdata_y))) 
+    if (!identical(colnames(pdata_x), colnames(pdata_y)))
         stop("phenoData column names are not identical for x and y")
-    if (ncol(pdata_x)) { 
+    if (ncol(pdata_x)) {
         new_pdata <- rbind(pdata_x, pdata_y)
     } else {
-        new_pdata <- data.frame(row.names = c(rownames(pdata_x), 
+        new_pdata <- data.frame(row.names = c(rownames(pdata_x),
                                               rownames(pdata_y)))
     }
     new_pdata <- as(new_pdata, "AnnotatedDataFrame")

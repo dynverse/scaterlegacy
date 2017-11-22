@@ -11,20 +11,20 @@ calculateQCMetrics(object, feature_controls = NULL, cell_controls = NULL,
 \item{object}{an SCESet object containing expression values and
 experimental information. Must have been appropriately prepared.}
 
-\item{feature_controls}{a named list containing one or more vectors 
+\item{feature_controls}{a named list containing one or more vectors
 (character vector of feature names, logical vector, or a numeric vector of
-indices are all acceptable) used to identify feature controls 
+indices are all acceptable) used to identify feature controls
 (for example, ERCC spike-in genes, mitochondrial genes, etc).}
 
 \item{cell_controls}{a character vector of cell (sample) names, or a logical
 vector, or a numeric vector of indices used to identify cell controls (for
 example, blank wells or bulk controls).}
 
-\item{nmads}{numeric scalar giving the number of median absolute deviations 
+\item{nmads}{numeric scalar giving the number of median absolute deviations
 to be used to flag potentially problematic cells based on total_counts (total
 number of counts for the cell, or library size) and total_features (number of
 features with non-zero expression). For total_features, cells are flagged for
-filtering only if total_features is \code{nmads} below the median. Default 
+filtering only if total_features is \code{nmads} below the median. Default
 value is 5.}
 
 \item{pct_feature_controls_threshold}{numeric scalar giving a threshold for
@@ -40,11 +40,11 @@ Calculate QC metrics
 }
 \details{
 Calculate useful quality control metrics to help with pre-processing
-of data and identification of potentially problematic features and cells. 
+of data and identification of potentially problematic features and cells.
 
 The following QC metrics are computed:
 \describe{
- \item{total_counts:}{Total number of counts for the cell (aka ``library 
+ \item{total_counts:}{Total number of counts for the cell (aka ``library
  size'')}
  \item{log10_total_counts:}{Total counts on the log10-scale}
  \item{total_features:}{The number of endogenous features (i.e. not control
@@ -83,14 +83,14 @@ The following QC metrics are computed:
   \code{counts_feature_controls}, this is defined for all control sets
   and their union.}
  \item{pct_counts_top_50_features:}{What percentage of the total counts is accounted for by the 50 highest-count features? Also computed for the top 100 and top 200 features, with the obvious changes to the column names. Note that the top ``X'' percentage will not be computed if the total number of genes is less than ``X''.}
- \item{pct_dropout:}{Percentage of features that are not ``detectably 
- expressed'', i.e. have expression below the \code{lowerDetectionLimit} 
+ \item{pct_dropout:}{Percentage of features that are not ``detectably
+ expressed'', i.e. have expression below the \code{lowerDetectionLimit}
  threshold.}
  \item{counts_endogenous_features:}{Total number of counts for the cell
   that come from endogenous features (i.e. not control features). Defaults
   to `depth` if no control features are indicated.}
  \item{log10_counts_endogenous_features:}{Total number of counts from
-  endogenous features on the log10-scale. Defaults to all counts if no 
+  endogenous features on the log10-scale. Defaults to all counts if no
   control features are indicated.}
  \item{n_detected_feature_controls:}{Number of defined feature controls
    that have expression greater than the threshold defined in the object
@@ -128,7 +128,7 @@ feature across all cells.}
 \item{log10_total_feature_counts:}{Total feature counts on the log10-scale.}
 \item{pct_total_counts:}{The percentage of all counts that are accounted for
 by the counts assigned to the feature.}
-\item{pct_dropout:}{The percentage of all cells that have no detectable 
+\item{pct_dropout:}{The percentage of all cells that have no detectable
 expression (i.e. \code{is_exprs(object)} is \code{FALSE}) for the feature.}
 \item{is_feature_control:}{Is the feature a control feature? Default is
 `FALSE` unless control features are defined by the user. If more than one
@@ -158,7 +158,7 @@ example_sceset <- calculateQCMetrics(example_sceset)
 example_sceset <- calculateQCMetrics(example_sceset, feature_controls = 1:40)
 
 ## with a named set of feature controls defined
-example_sceset <- calculateQCMetrics(example_sceset, 
+example_sceset <- calculateQCMetrics(example_sceset,
                                      feature_controls = list(ERCC = 1:40))
 
 }

@@ -1,5 +1,5 @@
-#ifndef SCATER_H
-#define SCATER_H
+#ifndef SCATERLEGAGY_H
+#define SCATERLEGAGY_H
 
 #include "R.h"
 #include "Rinternals.h"

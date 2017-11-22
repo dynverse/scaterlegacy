@@ -1,4 +1,4 @@
-#include "scater.h"
+#include "scaterlegacy.h"
 #define REGISTER(x, i) {#x, (DL_FUNC) &x, i}
 
 extern "C" {

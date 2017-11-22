@@ -16,18 +16,18 @@
 #'
 #' @param object an SCESet object containing expression values and
 #' experimental information. Must have been appropriately prepared.
-#' @param feature_controls a named list containing one or more vectors 
+#' @param feature_controls a named list containing one or more vectors
 #' (character vector of feature names, logical vector, or a numeric vector of
-#' indices are all acceptable) used to identify feature controls 
-#' (for example, ERCC spike-in genes, mitochondrial genes, etc). 
+#' indices are all acceptable) used to identify feature controls
+#' (for example, ERCC spike-in genes, mitochondrial genes, etc).
 #' @param cell_controls a character vector of cell (sample) names, or a logical
 #' vector, or a numeric vector of indices used to identify cell controls (for
 #' example, blank wells or bulk controls).
-#' @param nmads numeric scalar giving the number of median absolute deviations 
+#' @param nmads numeric scalar giving the number of median absolute deviations
 #' to be used to flag potentially problematic cells based on total_counts (total
 #' number of counts for the cell, or library size) and total_features (number of
 #' features with non-zero expression). For total_features, cells are flagged for
-#' filtering only if total_features is \code{nmads} below the median. Default 
+#' filtering only if total_features is \code{nmads} below the median. Default
 #' value is 5.
 #' @param pct_feature_controls_threshold numeric scalar giving a threshold for
 #' percentage of expression values accounted for by feature controls. Used as to
@@ -35,11 +35,11 @@
 #' feature controls.
 #'
 #' @details Calculate useful quality control metrics to help with pre-processing
-#' of data and identification of potentially problematic features and cells. 
-#' 
+#' of data and identification of potentially problematic features and cells.
+#'
 #' The following QC metrics are computed:
 #' \describe{
-#'  \item{total_counts:}{Total number of counts for the cell (aka ``library 
+#'  \item{total_counts:}{Total number of counts for the cell (aka ``library
 #'  size'')}
 #'  \item{log10_total_counts:}{Total counts on the log10-scale}
 #'  \item{total_features:}{The number of endogenous features (i.e. not control
@@ -78,14 +78,14 @@
 #'   \code{counts_feature_controls}, this is defined for all control sets
 #'   and their union.}
 #'  \item{pct_counts_top_50_features:}{What percentage of the total counts is accounted for by the 50 highest-count features? Also computed for the top 100 and top 200 features, with the obvious changes to the column names. Note that the top ``X'' percentage will not be computed if the total number of genes is less than ``X''.}
-#'  \item{pct_dropout:}{Percentage of features that are not ``detectably 
-#'  expressed'', i.e. have expression below the \code{lowerDetectionLimit} 
+#'  \item{pct_dropout:}{Percentage of features that are not ``detectably
+#'  expressed'', i.e. have expression below the \code{lowerDetectionLimit}
 #'  threshold.}
 #'  \item{counts_endogenous_features:}{Total number of counts for the cell
 #'   that come from endogenous features (i.e. not control features). Defaults
 #'   to `depth` if no control features are indicated.}
 #'  \item{log10_counts_endogenous_features:}{Total number of counts from
-#'   endogenous features on the log10-scale. Defaults to all counts if no 
+#'   endogenous features on the log10-scale. Defaults to all counts if no
 #'   control features are indicated.}
 #'  \item{n_detected_feature_controls:}{Number of defined feature controls
 #'    that have expression greater than the threshold defined in the object
@@ -123,7 +123,7 @@
 #' \item{log10_total_feature_counts:}{Total feature counts on the log10-scale.}
 #' \item{pct_total_counts:}{The percentage of all counts that are accounted for
 #' by the counts assigned to the feature.}
-#' \item{pct_dropout:}{The percentage of all cells that have no detectable 
+#' \item{pct_dropout:}{The percentage of all cells that have no detectable
 #' expression (i.e. \code{is_exprs(object)} is \code{FALSE}) for the feature.}
 #' \item{is_feature_control:}{Is the feature a control feature? Default is
 #' `FALSE` unless control features are defined by the user. If more than one
@@ -160,11 +160,11 @@
 #'
 #' ## with a set of feature controls defined
 #' example_sceset <- calculateQCMetrics(example_sceset, feature_controls = 1:40)
-#' 
+#'
 #' ## with a named set of feature controls defined
-#' example_sceset <- calculateQCMetrics(example_sceset, 
+#' example_sceset <- calculateQCMetrics(example_sceset,
 #'                                      feature_controls = list(ERCC = 1:40))
-#' 
+#'
 calculateQCMetrics <- function(object, feature_controls = NULL,
                                cell_controls = NULL, nmads = 5,
                                pct_feature_controls_threshold = 80) {
@@ -182,13 +182,13 @@ calculateQCMetrics <- function(object, feature_controls = NULL,
     counts_mat <- counts(object)
     tpm_mat <- tpm(object)
     fpkm_mat <- fpkm(object)
-  
+
     ## get number of sets of feature controls, and name them
     if ( is.null(feature_controls) ) {
         feature_controls <- list()
     } else if ( !is.list(feature_controls) ) {
-        feature_controls <- list(feature_controls) 
-    } 
+        feature_controls <- list(feature_controls)
+    }
     n_sets_feature_controls <- length(feature_controls)
     counter <- 1L
     for (i in seq_len(n_sets_feature_controls)) {
@@ -201,15 +201,15 @@ calculateQCMetrics <- function(object, feature_controls = NULL,
     object@featureControlInfo <- AnnotatedDataFrame(
         data.frame(name = names(feature_controls), stringsAsFactors = FALSE)
     )
-    
+
     if (n_sets_feature_controls) {
         ## Contributions from technical control features
         tech_features <- .process_feature_controls(
-            object, feature_controls, pct_feature_controls_threshold, exprs_mat, 
+            object, feature_controls, pct_feature_controls_threshold, exprs_mat,
             counts_mat, tpm_mat, fpkm_mat)
         feature_controls_pdata <- tech_features$pData
         feature_controls_fdata <- tech_features$fData
-       
+
         ## Combine all feature controls
         is_feature_control <- apply(feature_controls_fdata, 1, any)
         feature_controls_fdata <- cbind(feature_controls_fdata,
@@ -221,13 +221,13 @@ calculateQCMetrics <- function(object, feature_controls = NULL,
             matrix(0, nrow = ncol(object), ncol = 0))
     }
 
-    n_detected_feature_controls <- nexprs(object, 
-                                          subset_row = is_feature_control) 
+    n_detected_feature_controls <- nexprs(object,
+                                          subset_row = is_feature_control)
     df_pdata_this <- data.frame(n_detected_feature_controls)
 
     ## Compute metrics using all feature controls
     okay.expr.vals <- c("counts", "cpm", "tpm", "fpkm")
-    for (ex in okay.expr.vals) { 
+    for (ex in okay.expr.vals) {
         cur_mat <- switch(ex, counts = counts_mat, tpm = tpm_mat, fpkm = fpkm_mat)
         if (is.null(cur_mat)) { next }
         df_pdata_current <- .get_qc_metrics_exprs_mat(
@@ -238,9 +238,9 @@ calculateQCMetrics <- function(object, feature_controls = NULL,
     }
 
     feature_controls_pdata <- cbind(feature_controls_pdata, df_pdata_this)
-    
+
     ## Compute total_features and find outliers
-    total_features <-  nexprs(object, subset_row = !is_feature_control) 
+    total_features <-  nexprs(object, subset_row = !is_feature_control)
     filter_on_total_features <- isOutlier(total_features, nmads, type = "lower")
 
     ## Compute total_counts if counts are present
@@ -251,7 +251,7 @@ calculateQCMetrics <- function(object, feature_controls = NULL,
         total_counts <- colSums(exprs_mat)
         filter_on_total_counts <- isOutlier(total_counts, nmads, log = FALSE)
     }
-    
+
     ## Define counts from endogenous features
     qc_pdata <- feature_controls_pdata
 
@@ -266,14 +266,14 @@ calculateQCMetrics <- function(object, feature_controls = NULL,
     ## Define log10 read counts from feature controls
     stat.cols <- sub("_.*", "", colnames(qc_pdata))
     cols_to_log <- which(stat.cols %in% okay.expr.vals)
-    if (length(cols_to_log)) { 
+    if (length(cols_to_log)) {
         log10_cols <- log10(qc_pdata[, cols_to_log, drop = FALSE] + 1)
         colnames(log10_cols) <- paste0("log10_", colnames(qc_pdata)[cols_to_log])
-        
+
         ## Combine into a big pdata object
         qc_pdata <- cbind(qc_pdata, log10_cols)
     }
-    
+
     ## Define cell controls
     ### Determine if vector or list
     if ( is.null(cell_controls) | length(cell_controls) == 0 ) {
@@ -357,7 +357,7 @@ calculateQCMetrics <- function(object, feature_controls = NULL,
     new_fdata$total_feature_exprs <- rowSums(exprs_mat)
     new_fdata$pct_total_exprs <- 100 * rowSums(exprs_mat) / total_exprs
     new_fdata$pct_dropout <- 100 * (1 - new_fdata$n_cells_exprs / ncol(object))
-  
+
     for (ex in okay.expr.vals) {
         cur_mat <- switch(ex, counts = counts_mat, tpm = tpm_mat, fpkm = fpkm_mat)
         if (is.null(cur_mat)) { next }
@@ -388,11 +388,11 @@ calculateQCMetrics <- function(object, feature_controls = NULL,
     ## Many thanks to Aaron Lun for suggesting efficiency improvements
     ## for this function.
     ## Get total expression from feature controls
-    if (is.logical(is_feature_control)) { 
-        is_feature_control <- which(is_feature_control) 
+    if (is.logical(is_feature_control)) {
+        is_feature_control <- which(is_feature_control)
     }
-    exprs_feature_controls <- .checkedCall(cxx_colsum_subset, exprs_mat, 
-                                           is_feature_control - 1L) 
+    exprs_feature_controls <- .checkedCall("colsum_subset", exprs_mat,
+                                           is_feature_control - 1L)
 
     ## Get % expression from feature controls
     pct_exprs_feature_controls <- (100 * exprs_feature_controls /
@@ -413,24 +413,24 @@ calculateQCMetrics <- function(object, feature_controls = NULL,
         pct_top <- .calc_top_prop(exprs_mat, suffix = "features")
         if (!is.null(pct_top)) {
             df_pdata_this <- cbind(df_pdata_this, pct_top)
-            
+
             if ( compute_endog ) {
                 if ( length(is_feature_control) == 0L ) {
                     pct_top_endog <- pct_top
-                    colnames(pct_top_endog) <- sub("features$", 
-                                                   "endogenous_features", 
+                    colnames(pct_top_endog) <- sub("features$",
+                                                   "endogenous_features",
                                                    colnames(pct_top))
                     df_pdata_this <- cbind(df_pdata_this, pct_top_endog)
                 } else {
                     ## Repeating for the non-control features in the matrix.
-                    pct_top_endog <- .calc_top_prop(exprs_mat, 
+                    pct_top_endog <- .calc_top_prop(exprs_mat,
                                                     subset_row = -is_feature_control,
                                                     suffix = "endogenous_features")
-                    if (!is.null(pct_top_endog)) { 
+                    if (!is.null(pct_top_endog)) {
                         df_pdata_this <- cbind(df_pdata_this, pct_top_endog)
                     }
                 }
-            } 
+            }
         }
     }
     colnames(df_pdata_this) <- gsub("exprs", exprs_type, colnames(df_pdata_this))
@@ -442,19 +442,19 @@ calculateQCMetrics <- function(object, feature_controls = NULL,
                            subset_row = NULL, suffix="features") {
     ## Calculate the proportion of expression belonging to the top set of genes.
     ## Produces a matrix of proportions for each top number.
-    
-    if (is.null(subset_row)) { 
+
+    if (is.null(subset_row)) {
         total_nrows <- nrow(exprs_mat)
     } else {
-        subset_row <- .subset2index(subset_row, exprs_mat) 
+        subset_row <- .subset2index(subset_row, exprs_mat)
         subset_row <- subset_row - 1L # zero indexing needed for this C++ code.
         total_nrows <- length(subset_row)
     }
 
     can.calculate <- top.number <= total_nrows
-    if (any(can.calculate)) { 
+    if (any(can.calculate)) {
         top.number <- top.number[can.calculate]
-        pct_exprs_top_out <- .checkedCall(cxx_calc_top_features, exprs_mat,
+        pct_exprs_top_out <- .checkedCall("calc_top_features", exprs_mat,
                                           top.number, subset_row)
         ## this call returns proportions, not percentages, so adjust
         pct_exprs_top_out <- 100 * pct_exprs_top_out
@@ -466,13 +466,13 @@ calculateQCMetrics <- function(object, feature_controls = NULL,
 }
 
 
-.process_feature_controls <- function(object, feature_controls, 
+.process_feature_controls <- function(object, feature_controls,
                                       pct_feature_controls_threshold,
-                                      exprs_mat, counts_mat = NULL, 
+                                      exprs_mat, counts_mat = NULL,
                                       tpm_mat = NULL, fpkm_mat = NULL) {
-    ## Take a vector or list of feature_controls and process them to return 
+    ## Take a vector or list of feature_controls and process them to return
     ## new pData and fData in a list
-    
+
     ## determine if vector or list
     if ( is.list(feature_controls) ) {
         feature_controls_list <- feature_controls
@@ -492,13 +492,13 @@ calculateQCMetrics <- function(object, feature_controls = NULL,
         }
         if (is.character(gc_set))
             gc_set <- which(rownames(object) %in% gc_set)
-        
+
         df_pdata_this <- .get_qc_metrics_exprs_mat(
             exprs_mat, gc_set, pct_feature_controls_threshold,
             calc_top_features = FALSE, exprs_type = "exprs")
 
         for (ex in c("counts", "tpm", "fpkm")) {
-            cur_mat <- switch(ex, counts = counts_mat, 
+            cur_mat <- switch(ex, counts = counts_mat,
                               tpm = tpm_mat, fpkm = fpkm_mat)
             if (is.null(cur_mat)) { next }
             cur_df_pdata <- .get_qc_metrics_exprs_mat(
@@ -513,20 +513,20 @@ calculateQCMetrics <- function(object, feature_controls = NULL,
         n_detected_feature_controls <- nexprs(object, subset_row = gc_set)
         df_pdata_this$n_detected_feature_controls <-
             n_detected_feature_controls
-        
+
         colnames(df_pdata_this) <- paste(colnames(df_pdata_this),
                                          set_name, sep = "_")
-        if ( i > 1L )  
+        if ( i > 1L )
             feature_controls_pdata <- cbind(feature_controls_pdata,
                                             df_pdata_this)
         else
             feature_controls_pdata <- df_pdata_this
-        
+
         ## Construct data.frame for fData from this feature control set
         df_fdata_this <- data.frame(is_feature_control)
         colnames(df_fdata_this) <- paste(colnames(df_fdata_this), set_name,
                                          sep = "_")
-        if ( i > 1L ) 
+        if ( i > 1L )
             feature_controls_fdata <- cbind(feature_controls_fdata,
                                             df_fdata_this)
         else
@@ -539,27 +539,27 @@ calculateQCMetrics <- function(object, feature_controls = NULL,
 ################################################################################
 
 #' Identify if a cell is an outlier based on a metric
-#' 
+#'
 #' @param metric numeric or integer vector of values for a metric
 #' @param nmads scalar, number of median-absolute-deviations away from median
 #' required for a value to be called an outlier
-#' @param type character scalar, choice indicate whether outliers should be 
-#' looked for at both tails (default: "both") or only at the lower end ("lower") 
+#' @param type character scalar, choice indicate whether outliers should be
+#' looked for at both tails (default: "both") or only at the lower end ("lower")
 #' or the higher end ("higher")
-#' @param log logical, should the values of the metric be transformed to the 
+#' @param log logical, should the values of the metric be transformed to the
 #' log10 scale before computing median-absolute-deviation for outlier detection?
-#' @param subset logical or integer vector, which subset of values should be 
+#' @param subset logical or integer vector, which subset of values should be
 #' used to calculate the median/MAD? If \code{NULL}, all values are used.
-#' Missing values will trigger a warning and will be automatically ignored. 
+#' Missing values will trigger a warning and will be automatically ignored.
 #' @param batch factor of length equal to \code{metric}, specifying the batch
 #' to which each observation belongs. A median/MAD is calculated for each batch,
 #' and outliers are then identified within each batch.
-#' 
+#'
 #' @description Convenience function to determine which values for a metric are
 #' outliers based on median-absolute-deviation (MAD).
-#' 
+#'
 #' @return a logical vector of the same length as the \code{metric} argument
-#' 
+#'
 #' @export
 #' @examples
 #' data("sc_example_counts")
@@ -572,31 +572,31 @@ calculateQCMetrics <- function(object, feature_controls = NULL,
 #' ## with a set of feature controls defined
 #' example_sceset <- calculateQCMetrics(example_sceset, feature_controls = 1:40)
 #' isOutlier(example_sceset$total_counts, nmads = 3)
-#' 
-isOutlier <- function(metric, nmads = 5, type = c("both", "lower", "higher"), 
+#'
+isOutlier <- function(metric, nmads = 5, type = c("both", "lower", "higher"),
                       log = FALSE, subset = NULL, batch = NULL) {
     if (log) {
         metric <- log10(metric)
     }
-    if (any(is.na(metric))) { 
+    if (any(is.na(metric))) {
         warning("missing values ignored during outlier detection")
     }
 
     if (!is.null(batch)) {
         N <- length(metric)
-        if (length(batch)!=N) { 
+        if (length(batch)!=N) {
             stop("length of 'batch' must equal length of 'metric'")
         }
 
         # Coercing non-NULL subset into a logical vector.
-        if (!is.null(subset)) { 
+        if (!is.null(subset)) {
             new.subset <- logical(N)
             names(new.subset) <- names(metric)
             new.subset[subset] <- TRUE
             subset <- new.subset
         }
-   
-        # Computing QC metrics for each batch. 
+
+        # Computing QC metrics for each batch.
         by.batch <- split(seq_len(N), batch)
         collected <- logical(N)
         for (b in by.batch) {
@@ -645,7 +645,7 @@ isOutlier <- function(metric, nmads = 5, type = c("both", "lower", "higher"),
 #' interest.
 #' @param exprs_values which slot of the \code{assayData} in the \code{object}
 #' should be used to define expression? Valid options are "counts",
-#' "tpm", "fpkm" and "exprs" (default), or anything else in the object added manually by 
+#' "tpm", "fpkm" and "exprs" (default), or anything else in the object added manually by
 #' the user.
 #' @param ntop numeric scalar indicating the number of most variable features to
 #' use for the PCA. Default is \code{500}, but any \code{ntop} argument is
@@ -659,10 +659,10 @@ isOutlier <- function(metric, nmads = 5, type = c("both", "lower", "higher"),
 #' so that each feature has unit variance? Default is \code{TRUE}.
 #' @param theme_size numeric scalar providing base font size for ggplot theme.
 #'
-#' @details Plot the top 5 or 6 most important PCs (depending on the 
+#' @details Plot the top 5 or 6 most important PCs (depending on the
 #' \code{plot_type} argument for a given variable. Importance here is defined as
-#' the R-squared value from a linear model regressing each PC onto the variable 
-#' of interest. 
+#' the R-squared value from a linear model regressing each PC onto the variable
+#' of interest.
 #'
 #' @return a \code{\link{ggplot}} plot object
 #'
@@ -681,7 +681,7 @@ isOutlier <- function(metric, nmads = 5, type = c("both", "lower", "higher"),
 #'
 findImportantPCs <- function(object, variable="total_features",
                              plot_type = "pcs-vs-vars", exprs_values = "exprs",
-                             ntop = 500, feature_set = NULL, 
+                             ntop = 500, feature_set = NULL,
                              scale_features = TRUE, theme_size = 10) {
     if ( !is.null(feature_set) && typeof(feature_set) == "character" ) {
         if ( !(all(feature_set %in% featureNames(object))) )
@@ -702,7 +702,7 @@ findImportantPCs <- function(object, variable="total_features",
     keep_feature[is.na(keep_feature)] <- FALSE
     df_for_pca <- df_for_pca[, keep_feature]
     ## compute PCA
-    pca <- prcomp(df_for_pca, retx = TRUE, center = TRUE, 
+    pca <- prcomp(df_for_pca, retx = TRUE, center = TRUE,
                   scale. = scale_features)
     colnames(pca$x) <- paste("component", 1:ncol(pca$x))
     if (!(variable %in% colnames(pData(object))))
@@ -824,9 +824,9 @@ findImportantPCs <- function(object, variable="total_features",
 #' @param exprs_values which slot of the \code{assayData} in the \code{object}
 #' should be used to define expression? Valid options are "counts" (default),
 #' "tpm", "fpkm" and "exprs".
-#' @param feature_names_to_plot character scalar indicating which column of the 
-#' featureData slot in the \code{object} is to be used for the feature names 
-#' displayed on the plot. Default is \code{NULL}, in which case 
+#' @param feature_names_to_plot character scalar indicating which column of the
+#' featureData slot in the \code{object} is to be used for the feature names
+#' displayed on the plot. Default is \code{NULL}, in which case
 #' \code{featureNames(object)} is used.
 #'
 #' @details Plot the percentage of counts accounted for by the top n most highly
@@ -890,7 +890,7 @@ plotHighestExprs <- function(object, col_by_variable = "total_features", n = 50,
         message("Using exprs(object) values as expression values.")
         exprs_values <- "exprs"
     }
-    if ( exprs_values == "exprs" ) 
+    if ( exprs_values == "exprs" )
         exprs_mat <- 2 ^ exprs_mat - object@logExprsOffset
 
     ## Find the most highly expressed features in this dataset
@@ -912,11 +912,11 @@ plotHighestExprs <- function(object, col_by_variable = "total_features", n = 50,
         }
     }
     ## define feature names for plot
-    if (is.null(feature_names_to_plot) || 
+    if (is.null(feature_names_to_plot) ||
         is.null(fData(object)[[feature_names_to_plot]]))
         fdata$feature <- factor(featureNames(object),
                                 levels = featureNames(object)[rev(oo)])
-    else 
+    else
         fdata$feature <- factor(
             fData(object)[[feature_names_to_plot]],
             levels = fData(object)[[feature_names_to_plot]][rev(oo)])
@@ -935,13 +935,13 @@ plotHighestExprs <- function(object, col_by_variable = "total_features", n = 50,
 
     ## Melt dataframe so it is conducive to ggplot
     df_pct_exprs_by_cell_long <- reshape2::melt(df_pct_exprs_by_cell)
-    df_pct_exprs_by_cell_long$Feature <- 
+    df_pct_exprs_by_cell_long$Feature <-
         fdata[as.character(df_pct_exprs_by_cell_long$Var2), "feature"]
     df_pct_exprs_by_cell_long$Var2 <- factor(
         df_pct_exprs_by_cell_long$Var2, levels = rownames(object)[rev(oo[1:n])])
     df_pct_exprs_by_cell_long$Feature <- factor(
         df_pct_exprs_by_cell_long$Feature, levels = fdata$feature[rev(oo[1:n])])
-    
+
     ## Add colour variable information
     if (typeof_x == "discrete")
         df_pct_exprs_by_cell_long$colour_by <- factor(x)
@@ -1083,7 +1083,7 @@ plotExplanatoryVariables <- function(object, method = "density",
     ## exit if any features have zero variance as this causes problem downstream
     if ( any(matrixStats::rowVars(exprs_mat) == 0) )
         stop("Some features have zero variance. Please filter out features with zero variance (e.g. all zeros).")
-    
+
     ## Check that variables are defined
     if ( is.null(variables) ) {
         variables_to_plot <- varLabels(object)
@@ -1146,7 +1146,7 @@ This variable will not be plotted."))
                          nvars_to_plot)
 
     if ( method == "pairs" ) {
-        if (nvars_to_plot == 1) 
+        if (nvars_to_plot == 1)
             stop("Only one variable to plot, which does not make sense for a pairs plot.")
         ## Generate a larger data.frame for pairs plot
         df_to_expand <- val_to_plot_mat[, oo_median[1:nvars_to_plot], drop = FALSE]
@@ -1244,10 +1244,10 @@ This variable will not be plotted."))
 #' @param alpha (optional) numeric scalar (in the interval 0 to 1) to define the
 #'  alpha level (transparency) of plotted points.
 #' @param show_smooth logical, should a smoothed fit through feature controls
-#' (if available; all features if not) be shown on the plot? Lowess used if a 
-#' small number of feature controls. For details see 
+#' (if available; all features if not) be shown on the plot? Lowess used if a
+#' small number of feature controls. For details see
 #' \code{\link[ggplot2]{geom_smooth}}.
-#' @param se logical, should standard error (confidence interval) be shown for 
+#' @param se logical, should standard error (confidence interval) be shown for
 #' smoothed fit?
 #' @param ... further arguments passed to \code{\link{plotMetadata}} (should
 #' only be \code{size}, if anythin).
@@ -1274,9 +1274,9 @@ This variable will not be plotted."))
 #' plotExprsFreqVsMean(ex_sceset)
 #'
 #' ex_sceset <- calculateQCMetrics(
-#' ex_sceset, feature_controls = list(controls1 = 1:20, 
+#' ex_sceset, feature_controls = list(controls1 = 1:20,
 #'                                       controls2 = 500:1000),
-#'                                       cell_controls = list(set_1 = 1:5, 
+#'                                       cell_controls = list(set_1 = 1:5,
 #'                                       set_2 = 31:40))
 #' plotExprsFreqVsMean(ex_sceset)
 #'
@@ -1367,19 +1367,19 @@ plotExprsFreqVsMean <- function(object, feature_set = NULL,
         fq = fData(object)$pct_cells_exprs / 100,
         is_feature_control = feature_controls_logical)
     text_x_loc <- min(mn_vs_fq$mn) + 0.6 * diff(range(mn_vs_fq$mn))
-    
+
     if ( show_smooth ) {
         if ( any(feature_controls_logical) )
             plot_out <- plot_out +
-                geom_smooth(aes_string(x = "mn", y = "100 * fq"), 
-                            data = mn_vs_fq[feature_controls_logical,], 
+                geom_smooth(aes_string(x = "mn", y = "100 * fq"),
+                            data = mn_vs_fq[feature_controls_logical,],
                             colour = "firebrick", size = 1, se = se)
         else
             plot_out <- plot_out +
-                geom_smooth(aes_string(x = "mn", y = "100 * fq"), data = mn_vs_fq, 
+                geom_smooth(aes_string(x = "mn", y = "100 * fq"), data = mn_vs_fq,
                             colour = "firebrick", size = 1, se = se)
-    }        
-    
+    }
+
     ## estimate 50% spike-in dropout
     if ( any(feature_controls_logical) ) {
         dropout <- nls(fq ~ (1 / (1 + exp(-(-i + 1 * mn)))),
@@ -1390,13 +1390,13 @@ plotExprsFreqVsMean <- function(object, feature_set = NULL,
         # nl_fit_df$y <- 100 * (1/(1 + exp(-(-coef(dropout) + 1 * nl_fit_df$x))))
         # nl_fit_df$is_feature_control <- FALSE
         ## annotate plot
-        plot_out <- plot_out + 
+        plot_out <- plot_out +
             geom_vline(xintercept = coef(dropout), linetype = 2) +
             annotate("text", x = text_x_loc, y = 60, label = paste(
                 sum(mn_vs_fq[!feature_controls_logical, "mn"] > coef(dropout)),
                 " genes with mean expression\nhigher than value for 50% dropout of feature controls", sep = ""))
     }
-    
+
     ## add annotations to existing plot
     plot_out <- plot_out +
         geom_hline(yintercept = 50, linetype = 2) + # 50% dropout
@@ -1406,7 +1406,7 @@ plotExprsFreqVsMean <- function(object, feature_set = NULL,
         annotate("text", x = text_x_loc, y = 20, label =  paste(
             sum(mn_vs_fq$fq >= 0.25),
             " genes are expressed\nin at least 25% of cells", sep = "" ))
-    
+
     ## return the plot object
     plot_out
 }
@@ -1481,67 +1481,67 @@ plotQC <- function(object, type = "highest-expression", ...) {
 
 #' Plot a relative log expression (RLE) plot
 #'
-#' Produce a relative log expression (RLE) plot of one or more transformations of 
+#' Produce a relative log expression (RLE) plot of one or more transformations of
 #' cell expression values.
 #'
 #' @param object an \code{SCESet} object
-#' @param exprs_mats named list of expression matrices. Entries can either be a 
-#' character string, in which case the corresponding expression matrix will be 
+#' @param exprs_mats named list of expression matrices. Entries can either be a
+#' character string, in which case the corresponding expression matrix will be
 #' extracted from the SCESet \code{object}, or a matrix of expression values.
 #' @param exprs_logged logical vector of same length as \code{exprs_mats} indicating
 #' whether the corresponding entry in \code{exprs_mats} contains logged expression
 #' values (\code{TRUE}) or not (\code{FALSE}).
 #' @param colour_by character string defining the column of \code{pData(object)} to
-#' be used as a factor by which to colour the points in the plot. Alternatively, 
+#' be used as a factor by which to colour the points in the plot. Alternatively,
 #' a data frame with one column, containing values to map to colours for all cells.
 #' @param style character(1), either \code{"minimal"} (default) or \code{"full"},
 #' defining the boxplot style to use. \code{"minimal"} uses Tufte-style boxplots and
-#' is fast for large numbers of cells. \code{"full"} uses the usual 
-#' \code{\link{ggplot2}} and is more detailed and flexible, but can take a long 
+#' is fast for large numbers of cells. \code{"full"} uses the usual
+#' \code{\link{ggplot2}} and is more detailed and flexible, but can take a long
 #' time to plot for large datasets.
 #' @param legend character, specifying how the legend(s) be shown? Default is
 #' \code{"auto"}, which hides legends that have only one level and shows others.
 #' Alternative is "none" (hide all legends).
-#' @param order_by_colour logical, should cells be ordered (grouped) by the 
-#' \code{colour_by} variable? Default is \code{TRUE}. Useful for visualising 
+#' @param order_by_colour logical, should cells be ordered (grouped) by the
+#' \code{colour_by} variable? Default is \code{TRUE}. Useful for visualising
 #' differences between batches or experimental conditions.
-#' @param ncol integer, number of columns for the facetting of the plot. 
+#' @param ncol integer, number of columns for the facetting of the plot.
 #' Default is 1.
 #' @param ... further arguments passed to \code{\link[ggplot2]{geom_boxplot}}.
 #'
 #' @return a ggplot plot object
 #'
-#' @details 
+#' @details
 #' Unwanted variation can be highly problematic and so its detection is often crucial.
-#' Relative log expression (RLE) plots are a powerful tool for visualising such 
+#' Relative log expression (RLE) plots are a powerful tool for visualising such
 #' variation in high dimensional data. RLE plots are particularly useful for
-#' assessing whether a procedure aimed at removing unwanted variation, i.e. a 
-#' normalisation procedure, has been successful. These plots, while originally 
-#' devised for gene expression data from microarrays, can also be used to reveal 
-#' unwanted variation in single-cell expression data, where such variation can be 
+#' assessing whether a procedure aimed at removing unwanted variation, i.e. a
+#' normalisation procedure, has been successful. These plots, while originally
+#' devised for gene expression data from microarrays, can also be used to reveal
+#' unwanted variation in single-cell expression data, where such variation can be
 #' problematic.
-#' 
-#' If style is "full", as usual with boxplots, the box shows the inter-quartile 
-#' range and whiskers extend no more than 1.5 * IQR from the hinge (the 25th or 
-#' 75th percentile). Data beyond the whiskers are called outliers and are plotted 
+#'
+#' If style is "full", as usual with boxplots, the box shows the inter-quartile
+#' range and whiskers extend no more than 1.5 * IQR from the hinge (the 25th or
+#' 75th percentile). Data beyond the whiskers are called outliers and are plotted
 #' individually. The median (50th percentile) is shown with a white bar.
-#' 
+#'
 #' If style is "minimal", then median is shown with a circle, the IQR in a grey
-#' line, and "whiskers" (as defined above) for the plots are shown with coloured 
+#' line, and "whiskers" (as defined above) for the plots are shown with coloured
 #' lines. No outliers are shown for this plot style.
 #'
-#' @references 
-#' Gandolfo LC, Speed TP. RLE Plots: Visualising Unwanted Variation in High Dimensional Data. 
+#' @references
+#' Gandolfo LC, Speed TP. RLE Plots: Visualising Unwanted Variation in High Dimensional Data.
 #' arXiv [stat.ME]. 2017. Available: http://arxiv.org/abs/1704.03590
 #'
-#' @author 
+#' @author
 #' Davis McCarthy
 #'
 #' @name plotRLE
 #' @aliases plotRLE plotRLE,SCESet-method
 #' @export
-#' 
-#' @examples 
+#'
+#' @examples
 #' data("sc_example_counts")
 #' data("sc_example_cell_info")
 #' pd <- new("AnnotatedDataFrame", data = sc_example_cell_info)
@@ -1549,19 +1549,19 @@ plotQC <- function(object, type = "highest-expression", ...) {
 #' drop_genes <- apply(exprs(example_sceset), 1, function(x) {var(x) == 0})
 #' example_sceset <- example_sceset[!drop_genes, ]
 #'
-#' plotRLE(example_sceset, list(exprs = "exprs", counts = "counts"), c(TRUE, FALSE), 
+#' plotRLE(example_sceset, list(exprs = "exprs", counts = "counts"), c(TRUE, FALSE),
 #'        colour_by = "Mutation_Status", style = "minimal")
 #'
-#' plotRLE(example_sceset, list(exprs = "exprs", counts = "counts"), c(TRUE, FALSE), 
+#' plotRLE(example_sceset, list(exprs = "exprs", counts = "counts"), c(TRUE, FALSE),
 #'        colour_by = "Mutation_Status", style = "full",
 #'        outlier.alpha = 0.1, outlier.shape = 3, outlier.size = 0)
-#' 
+#'
 setMethod("plotRLE", signature("SCESet"),
           function(object, exprs_mats = list(exprs = "exprs"), exprs_logged = c(TRUE),
-                   colour_by = NULL, style = "minimal", legend = "auto", 
+                   colour_by = NULL, style = "minimal", legend = "auto",
                    order_by_colour = TRUE, ncol = 1,  ...) {
               .plotRLE(object, exprs_mats = exprs_mats, exprs_logged = exprs_logged,
-                       colour_by = colour_by, legend = legend, 
+                       colour_by = colour_by, legend = legend,
                        order_by_colour = order_by_colour, ncol = ncol, style = style, ...)
           })
 
@@ -1582,7 +1582,7 @@ setMethod("plotRLE", signature("SCESet"),
     ## calculate RLE
     rle_mats <- list()
     for (i in seq_along(exprs_mats)) {
-        rle_mats[[i]] <- .calc_RLE(.get_exprs_for_RLE(object, exprs_mats[[i]]), 
+        rle_mats[[i]] <- .calc_RLE(.get_exprs_for_RLE(object, exprs_mats[[i]]),
                                    exprs_logged[i])
         names(rle_mats)[i] <- names(exprs_mats)[i]
         if (is.null(ncells))
@@ -1622,12 +1622,12 @@ setMethod("plotRLE", signature("SCESet"),
         }
     }
     if (style == "full") {
-        aesth <- aes_string(x = "x", group = "x", y = "rle", 
+        aesth <- aes_string(x = "x", group = "x", y = "rle",
                             colour = colour_by, fill = colour_by)
         plot_out <- .plotRLE_full(df_to_plot, aesth, ncol, ...)
     } else if (style == "minimal") {
         plot_out <- .plotRLE_minimal(df_to_plot, colour_by, ncol)
-    } 
+    }
     plot_out <- .resolve_plot_colours(plot_out, colour_by_vals, colour_by,
                                       fill = FALSE)
     plot_out <- .resolve_plot_colours(plot_out, colour_by_vals, colour_by,
@@ -1642,9 +1642,9 @@ setMethod("plotRLE", signature("SCESet"),
     colnames(boxstats) <- c("q0", "q25", "q50", "q75", "q100")
     boxdf <- dplyr::as_data_frame(boxstats)
     interqr <- boxstats[, 4] - boxstats[, 2]
-    boxdf[["whiskMin"]] <- pmax(boxdf[["q0"]], 
+    boxdf[["whiskMin"]] <- pmax(boxdf[["q0"]],
                                 boxdf[["q25"]] - 1.5 * interqr)
-    boxdf[["whiskMax"]] <- pmin(boxdf[["q100"]], 
+    boxdf[["whiskMax"]] <- pmin(boxdf[["q100"]],
                                 boxdf[["q75"]] + 1.5 * interqr)
     boxdf[["variable"]] <- colnames(mat)
     boxdf
@@ -1652,9 +1652,9 @@ setMethod("plotRLE", signature("SCESet"),
 
 .plotRLE_minimal <- function(df, colour_by, ncol, ...) {
     plot_out <- ggplot(df, aes_string(x = "x", fill = colour_by)) +
-        geom_segment(aes_string(xend = "x", y = "q25", yend = "q75"), 
+        geom_segment(aes_string(xend = "x", y = "q25", yend = "q75"),
                                 colour = "gray60") +
-        geom_segment(aes_string(xend = "x", y = "q75", yend = "whiskMax", 
+        geom_segment(aes_string(xend = "x", y = "q75", yend = "whiskMax",
                                 colour = colour_by)) +
         geom_segment(aes_string(xend = "x", y = "q25", yend = "whiskMin",
                                 colour = colour_by)) +
@@ -1663,7 +1663,7 @@ setMethod("plotRLE", signature("SCESet"),
         facet_wrap(~source, ncol = ncol) +
         ylab("Relative log expression") + xlab("Sample") +
         theme_classic() +
-        theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), 
+        theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(),
               axis.line.x = element_blank())
     plot_out
 }
@@ -1672,13 +1672,13 @@ setMethod("plotRLE", signature("SCESet"),
 .plotRLE_full <- function(df, aesth, ncol, ...) {
     plot_out <- ggplot(df, aesth) +
         geom_boxplot(...) + # geom_boxplot(notch=T) to compare groups
-        stat_summary(geom = "crossbar", width = 0.65, fatten = 0, color = "white", 
-                     fun.data = function(x){ 
+        stat_summary(geom = "crossbar", width = 0.65, fatten = 0, color = "white",
+                     fun.data = function(x){
                          return(c(y = median(x), ymin = median(x), ymax = median(x))) }) +
         facet_wrap(~source, ncol = ncol) +
         ylab("Relative log expression") + xlab("Sample") +
         theme_classic() +
-        theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), 
+        theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(),
               axis.line.x = element_blank())
     plot_out
 }
@@ -1691,7 +1691,7 @@ setMethod("plotRLE", signature("SCESet"),
             return(get_exprs(object, exprs_mat))
         else
             stop("exprs_mat must be either a matrix of expression values or a character string giving the name of an expression data element of the SCESet object.")
-    } 
+    }
 }
 
 .calc_RLE <- function(exprs_mat, logged = TRUE) {

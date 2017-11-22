@@ -1,23 +1,23 @@
-#include "scater.h"
+#include "scaterlegacy.h"
 
 template <typename T>
 SEXP calc_exprs_internal (const T* ptr, const matrix_info& MAT, SEXP size_fac, SEXP prior_count, SEXP log, SEXP sum, SEXP subset) {
-    if (!isReal(size_fac) || LENGTH(size_fac)!=MAT.ncol) { 
+    if (!isReal(size_fac) || LENGTH(size_fac)!=MAT.ncol) {
         throw std::runtime_error("length of 'size_fac' does not equal number of columns");
     }
     const double* szptr=REAL(size_fac);
-    if (!isReal(prior_count) || LENGTH(prior_count)!=1) { 
+    if (!isReal(prior_count) || LENGTH(prior_count)!=1) {
         throw std::runtime_error("'prior_count' should be a logical scalar");
     }
     const double prior=asReal(prior_count);
 
     // Checking flags.
     if (!isLogical(log) || LENGTH(log)!=1) {
-        throw std::runtime_error("log specification should be a logical scalar"); 
+        throw std::runtime_error("log specification should be a logical scalar");
     }
     const bool dolog=asLogical(log);
     if (!isLogical(sum) || LENGTH(sum)!=1) {
-        throw std::runtime_error("sum specification should be a sumical scalar"); 
+        throw std::runtime_error("sum specification should be a sumical scalar");
     }
     const bool dosum=asLogical(sum);
 
@@ -27,7 +27,7 @@ SEXP calc_exprs_internal (const T* ptr, const matrix_info& MAT, SEXP size_fac, S
     const int* sptr=subout.second;
 
     SEXP output;
-    if (dosum) { 
+    if (dosum) {
         output=PROTECT(allocVector(REALSXP, slen));
     } else {
         output=PROTECT(allocMatrix(REALSXP, slen, MAT.ncol));
@@ -43,22 +43,22 @@ SEXP calc_exprs_internal (const T* ptr, const matrix_info& MAT, SEXP size_fac, S
         for (size_t c=0; c<MAT.ncol; ++c) {
             for (s=0; s<slen; ++s) {
                 tmp=ptr[sptr[s]]/szptr[c] + prior;
-                if (dosum) { 
+                if (dosum) {
                     optr[s]+=tmp;
-                } else if (dolog) { 
+                } else if (dolog) {
                     optr[s]=std::log(tmp)/M_LN2;
                 } else {
                     optr[s]=tmp;
                 }
             }
             ptr+=MAT.nrow;
-            if (!dosum) { 
+            if (!dosum) {
                 optr+=slen;
             }
         }
 
         if (dosum && dolog) {
-            for (s=0; s<slen; ++s) { 
+            for (s=0; s<slen; ++s) {
                 optr[s]=std::log(optr[s])/M_LN2;
             }
         }

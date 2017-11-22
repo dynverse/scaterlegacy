@@ -23,7 +23,7 @@
     return(unname(subset))
 }
 
-.fcontrol_names <- function(object){  
+.fcontrol_names <- function(object){
     ## Gets names of all feature control sets.
     object@featureControlInfo$name
 }
@@ -57,7 +57,7 @@
     } else {
         subset_row <- .subset2index(subset_row, exprs_mat)
     }
-    .checkedCall(cxx_calc_exprs, exprs_mat, as.double(size_factors),
+    .checkedCall("calc_exprs", exprs_mat, as.double(size_factors),
                  as.double(logExprsOffset), as.logical(log),
                  as.logical(sum), subset_row - 1L)
 }

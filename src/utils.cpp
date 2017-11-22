@@ -1,4 +1,4 @@
-#include "scater.h"
+#include "scaterlegacy.h"
 
 bool isNA(int x) {
     return x==NA_INTEGER;
@@ -9,7 +9,7 @@ bool isNA(double x) {
 }
 
 subset_info process_subset_vector(SEXP subset, const matrix_info& MAT, bool byrow) {
-    if (!isInteger(subset)) { 
+    if (!isInteger(subset)) {
         throw std::runtime_error("subset vector must be an integer vector");
     }
     const int slen=LENGTH(subset);
@@ -17,7 +17,7 @@ subset_info process_subset_vector(SEXP subset, const matrix_info& MAT, bool byro
     const size_t& upper=(byrow ? MAT.nrow : MAT.ncol);
 
     for (int s=0; s<slen; ++s) {
-        if (sptr[s] < 0 || sptr[s] >= upper) { 
+        if (sptr[s] < 0 || sptr[s] >= upper) {
             throw std::runtime_error("subset indices out of range");
         }
     }
@@ -25,8 +25,8 @@ subset_info process_subset_vector(SEXP subset, const matrix_info& MAT, bool byro
 }
 
 /*********************************************************
- This contains a number of small functions, written to improve 
- speed or memory efficiency over a native R implementation. 
+ This contains a number of small functions, written to improve
+ speed or memory efficiency over a native R implementation.
  **********************************************************/
 
 /* A function to get the column sum in a subset of rows. */
@@ -40,7 +40,7 @@ SEXP colsum_subset_internal (const T* ptr, const matrix_info& MAT, SEXP subset) 
     SEXP output=PROTECT(allocVector(REALSXP, MAT.ncol));
     try {
         double* optr=REAL(output);
-        
+
         // Summing across values.
         int s;
         for (size_t c=0; c<MAT.ncol; ++c) {
@@ -81,7 +81,7 @@ SEXP rowsum_subset_internal (const T* ptr, const matrix_info& MAT, SEXP subset) 
     try {
         double* optr=REAL(output);
         std::fill(optr, optr+MAT.nrow, 0);
-        
+
         // Summing across values.
         int s;
         size_t r;
@@ -122,7 +122,7 @@ SEXP colsum_exprs_subset_internal (const T* ptr, const matrix_info& MAT, T thres
     SEXP output=PROTECT(allocVector(INTSXP, MAT.ncol));
     try {
         int* optr=INTEGER(output);
-        
+
         // Counting whether or not they're expressed.
         int s;
         for (size_t c=0; c<MAT.ncol; ++c) {
@@ -145,12 +145,12 @@ SEXP colsum_exprs_subset_internal (const T* ptr, const matrix_info& MAT, T thres
 SEXP colsum_exprs_subset(SEXP matrix, SEXP threshold, SEXP subset) try {
     matrix_info MAT=check_matrix(matrix);
     if (MAT.is_integer){
-        if (!isInteger(threshold) || LENGTH(threshold)!=1) { 
+        if (!isInteger(threshold) || LENGTH(threshold)!=1) {
             throw std::runtime_error("threshold should be an integer scalar");
         }
         return colsum_exprs_subset_internal<int>(MAT.iptr, MAT, asInteger(threshold), subset);
     } else {
-        if (!isReal(threshold) || LENGTH(threshold)!=1) { 
+        if (!isReal(threshold) || LENGTH(threshold)!=1) {
             throw std::runtime_error("threshold should be a double-precision scalar");
         }
         return colsum_exprs_subset_internal<double>(MAT.dptr, MAT, asReal(threshold), subset);
@@ -171,7 +171,7 @@ SEXP rowsum_exprs_subset_internal (const T* ptr, const matrix_info& MAT, T thres
     try {
         int* optr=INTEGER(output);
         std::fill(optr, optr+MAT.nrow, 0);
-        
+
         size_t r;
         const T* ptr2=NULL;
         for (int s=0; s<slen; ++s) {
@@ -193,12 +193,12 @@ SEXP rowsum_exprs_subset_internal (const T* ptr, const matrix_info& MAT, T thres
 SEXP rowsum_exprs_subset(SEXP matrix, SEXP threshold, SEXP subset) try {
     matrix_info MAT=check_matrix(matrix);
     if (MAT.is_integer){
-        if (!isInteger(threshold) || LENGTH(threshold)!=1) { 
+        if (!isInteger(threshold) || LENGTH(threshold)!=1) {
             throw std::runtime_error("threshold should be an integer scalar");
         }
         return rowsum_exprs_subset_internal<int>(MAT.iptr, MAT, asInteger(threshold), subset);
     } else {
-        if (!isReal(threshold) || LENGTH(threshold)!=1) { 
+        if (!isReal(threshold) || LENGTH(threshold)!=1) {
             throw std::runtime_error("threshold should be a double-precision scalar");
         }
         return rowsum_exprs_subset_internal<double>(MAT.dptr, MAT, asReal(threshold), subset);
@@ -214,8 +214,8 @@ SEXP negative_counts_internal(const T* ptr, const matrix_info& MAT) {
     const size_t total_size=MAT.nrow*MAT.ncol;
     for (size_t i=0; i<total_size; ++i) {
         if (ptr[i] < 0 || isNA(ptr[i])) { return ScalarLogical(1); }
-    } 
-    return ScalarLogical(0);        
+    }
+    return ScalarLogical(0);
 }
 
 SEXP negative_counts(SEXP matrix) try {
@@ -236,8 +236,8 @@ SEXP missing_exprs_internal(const T* ptr, const matrix_info& MAT) {
     const size_t total_size=MAT.nrow*MAT.ncol;
     for (size_t i=0; i<total_size; ++i) {
         if (isNA(ptr[i])) { return ScalarLogical(1); }
-    } 
-    return ScalarLogical(0);        
+    }
+    return ScalarLogical(0);
 }
 
 SEXP missing_exprs(SEXP matrix) try {
@@ -255,14 +255,14 @@ SEXP missing_exprs(SEXP matrix) try {
 
 template <typename T>
 SEXP calc_top_features_internal(const T* ptr, const matrix_info& MAT, SEXP top, SEXP subset) {
-    if (!isInteger(top)) { 
+    if (!isInteger(top)) {
         throw std::runtime_error("top specification must be an integer vector");
     }
     const int ntop=LENGTH(top);
     const int *tptr=INTEGER(top);
     for (size_t t=1; t<ntop; ++t) {
-        if (tptr[t] < tptr[t-1]) { 
-            throw std::runtime_error("numbers of top genes must be sorted"); 
+        if (tptr[t] < tptr[t-1]) {
+            throw std::runtime_error("numbers of top genes must be sorted");
         }
     }
 
@@ -281,7 +281,7 @@ SEXP calc_top_features_internal(const T* ptr, const matrix_info& MAT, SEXP top, 
     if (ntop && (tptr[0] < 1 || tptr[ntop-1] > itercycles)) {
         throw std::runtime_error("number of top genes is out of index range");
     }
-    
+
     SEXP output=PROTECT(allocMatrix(REALSXP, MAT.ncol, ntop));
     try {
         double** optrs=(double**)R_alloc(ntop, sizeof(double*));
@@ -305,7 +305,7 @@ SEXP calc_top_features_internal(const T* ptr, const matrix_info& MAT, SEXP top, 
                 values[r]=chosen;
                 total+=chosen;
             }
-            
+
             // Sorting in descending order, and computing the accumulated total.
             std::sort(values.begin(), values.end(), std::greater<T>());
             x=0;

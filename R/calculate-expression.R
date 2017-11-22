@@ -109,7 +109,7 @@ nexprs <- function(object, lowerDetectionLimit = NULL, exprs_values = NULL, byro
                 out <- colSums(is_exprs_mat)
             } else {
                 subset_row <- .subset2index(subset_row, is_exprs_mat)
-                out <- .checkedCall(cxx_colsum_subset, is_exprs_mat, subset_row - 1L)
+                out <- .checkedCall("colsum_subset", is_exprs_mat, subset_row - 1L)
                 names(out) <- colnames(is_exprs_mat)
             }
         } else {
@@ -119,28 +119,28 @@ nexprs <- function(object, lowerDetectionLimit = NULL, exprs_values = NULL, byro
             } else {
                 subset_row <- .subset2index(subset_row, exprs_mat)
             }
-            out <- .checkedCall(cxx_colsum_exprs_subset, exprs_mat,
+            out <- .checkedCall("colsum_exprs_subset", exprs_mat,
                                 lowerDetectionLimit, subset_row - 1L)
             names(out) <- colnames(exprs_mat)
         }
     } else {
         if (!is.null(is_exprs_mat)) {
             # Counting expressing cells per gene, using predefined 'is_exprs(object)'.
-            if (is.null(subset_col)) { 
+            if (is.null(subset_col)) {
                 out <- rowSums(is_exprs_mat)
             } else {
                 subset_col <- .subset2index(subset_col, is_exprs_mat, byrow = FALSE)
-                out <- .checkedCall(cxx_rowsum_subset, is_exprs_mat, subset_col - 1L)
+                out <- .checkedCall("rowsum_subset", is_exprs_mat, subset_col - 1L)
                 names(out) <- rownames(is_exprs_mat)
             }
         } else {
             # Counting expressing cells per gene, using the counts to define 'expressing'.
             if (is.null(subset_col)) {
-                subset_col <- seq_len(ncol(exprs_mat))                
+                subset_col <- seq_len(ncol(exprs_mat))
             } else {
                 subset_col <- .subset2index(subset_col, exprs_mat, byrow = FALSE)
-            } 
-            out <- .checkedCall(cxx_rowsum_exprs_subset, exprs_mat, 
+            }
+            out <- .checkedCall("rowsum_exprs_subset", exprs_mat,
                                 lowerDetectionLimit, subset_col - 1L)
             names(out) <- rownames(exprs_mat)
         }
@@ -342,7 +342,7 @@ calcAverage <- function(object) {
 
     all.ave <- .compute_ave_count(counts(object), size_factors = sf)
     for (alt in control_list) {
-        all.ave[alt$ID] <- .compute_ave_count(counts(object), 
+        all.ave[alt$ID] <- .compute_ave_count(counts(object),
                                               size_factors = alt$SF,
                                               subset_row = alt$ID)
     }
