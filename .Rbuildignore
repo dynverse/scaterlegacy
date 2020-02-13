@@ -5,3 +5,5 @@
 ^\.travis\.yml$
 ^appveyor\.yml$
 ^\.git*
+^LICENSE\.md$
+^LICENSE\.md$
